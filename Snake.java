@@ -10,34 +10,39 @@ public class Snake extends Frame{
 		public void keyPressed(KeyEvent e){
 			
 			switch(e.getKeyCode()){
-				case KeyEvent.VK_S:
-									last=e;
+				case KeyEvent.VK_DOWN:
+									if(last==null||last.getKeyCode()!=KeyEvent.VK_UP)
+										last=e;
 									break;
 					
-				case KeyEvent.VK_A:
-									last=e;
+				case KeyEvent.VK_LEFT:
+									if(last==null||last.getKeyCode()!=KeyEvent.VK_RIGHT)
+										last=e;
 									break;
 					
-				case KeyEvent.VK_D:
-									last=e;
+				case KeyEvent.VK_RIGHT:
+									if(last==null||KeyEvent.VK_LEFT!=last.getKeyCode())
+										last=e;
 									break;
 					
-				case KeyEvent.VK_W:
-									last=e;
+				case KeyEvent.VK_UP:
+									if(last==null||KeyEvent.VK_DOWN!=last.getKeyCode())
+										last=e;
 									break;
 			}			
 		}
 	}
 	KeyEvent last=null;
-	int x,mm,score=0,random=649;
-	Button bt[];
+	int x,mm,score=0,random;
+	Panel bt[];
 	int []L,R,D,U,MM;
 	Dialog d;
 	Mover m;
 	Snake(){
 		super("Snake Game");		
-		x=30;
+		x=40;
 		mm=(x*x)/2 - (x/2 +1);
+		random=(int)(Math.random()*(x*x-1));
 		L=new int[x];
 		R=new int[x];
 		D=new int[x];
@@ -54,9 +59,9 @@ public class Snake extends Frame{
 			U[i]=U[i-1]+1;			
 		}
 		m=new Mover();
-		bt=new Button[x*x];
+		bt=new Panel[x*x];
 		for(int i=0;i<x*x;++i){
-			bt[i]=new Button();
+			bt[i]=new Panel();
 			add(bt[i]);
 			bt[i].setBackground(Color.CYAN);
 			bt[i].addKeyListener(m);
@@ -68,7 +73,21 @@ public class Snake extends Frame{
 		bt[random].setBackground(Color.ORANGE);
 		addKeyListener(m);
 		setBounds(430,170,500,500);	
-		setVisible(true);
+		Dialog tutorial=new Dialog(this,"How to Play");
+		tutorial.setLayout(new GridLayout(4,1));
+		Button tutBt=new Button("OK");
+		tutBt.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				tutorial.setVisible(false);
+				setVisible(true);
+			}
+		});
+		tutorial.add(new Label("Snake Game By Abhishek Gupta"));
+		tutorial.add(new Label("Use Arrow Keys to Play"));
+		tutorial.add(new Label("Your Snake is Red Coloured"));
+		tutorial.add(tutBt);
+		tutorial.setBounds(450,300,400,200);
+		tutorial.setVisible(true);
 		d=new Dialog(this,"Game Over");
 		d.setLayout(new FlowLayout());
 		d.addWindowListener(new Close());
@@ -102,7 +121,7 @@ public class Snake extends Frame{
 					boolean T=true;
 					int ctr=0;
 					while(T){
-						random=(int)(Math.random()*899);
+						random=(int)(Math.random()*(x*x-1));
 						for(int i: MM){
 							if(random==i){
 								ctr++;break;
@@ -127,7 +146,7 @@ public class Snake extends Frame{
 				}
 				else if(last==a){
 					switch(a.getKeyCode()){
-						case KeyEvent.VK_S:
+						case KeyEvent.VK_DOWN:
 							
 							for(int i : D){
 								if(mm==i){
@@ -139,10 +158,10 @@ public class Snake extends Frame{
 							}
 							
 							
-							mm+=30;
+							mm+=x;
 							for(int i=MM.length-1;i>=0;--i){
 								if(i==0){
-									MM[i]=mm-30;
+									MM[i]=mm-x;
 								}
 								else{
 									MM[i]=MM[i-1];
@@ -152,7 +171,7 @@ public class Snake extends Frame{
 								return;
 							break;
 							
-						case KeyEvent.VK_A:
+						case KeyEvent.VK_LEFT:
 							
 							for(int i : L){
 								if(mm==i){
@@ -177,7 +196,7 @@ public class Snake extends Frame{
 								return;
 							break;
 							
-						case KeyEvent.VK_D:
+						case KeyEvent.VK_RIGHT:
 							for(int i : R){
 								if(mm==i){
 									bt[mm].setBackground(Color.BLACK);
@@ -201,7 +220,7 @@ public class Snake extends Frame{
 								return;
 							break;
 							
-						case KeyEvent.VK_W:
+						case KeyEvent.VK_UP:
 							for(int i : U){
 								if(mm==i){
 									bt[mm].setBackground(Color.BLACK);
@@ -212,10 +231,10 @@ public class Snake extends Frame{
 							}
 							
 							
-							mm-=30;
+							mm-=x;
 							for(int i=MM.length-1;i>=0;--i){
 								if(i==0){
-									MM[i]=mm+30;
+									MM[i]=mm+x;
 								}
 								else{
 									MM[i]=MM[i-1];
